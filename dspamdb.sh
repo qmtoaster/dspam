@@ -53,15 +53,17 @@ if [ "$?" != "0" ]; then
    exit 1
 fi
 
+
 echo ""
-echo "Destroying Dspam database..."
-sleep 7
+echo "use dspam" | mysql -uroot -p$MYSQLPW &> /dev/null
+[ "$?" = "0" ] && mysqldump -uroot -p$MYSQLPW dspam > dspam.sql \
+               && echo "drop database dspam" | mysql -u root -p$MYSQLPW \
+               && echo "dspam db saved to dspam.sql and dropped..."
+
 # Create dspam with correct permissions
-mysqladmin drop dspam -uroot -p$MYSQLPW
 mysqladmin create dspam -uroot -p$MYSQLPW
 mysqladmin -uroot -p$MYSQLPW reload
 mysqladmin -uroot -p$MYSQLPW refresh
-
 echo "GRANT ALL ON dspam.* TO dspam@localhost IDENTIFIED BY 'p4ssw3rd'" | mysql -uroot -p$MYSQLPW
 mysqladmin -uroot -p$MYSQLPW reload
 mysqladmin -uroot -p$MYSQLPW refresh
@@ -70,6 +72,7 @@ if [ "$?" != "0" ]; then
    echo "Error downloading dspam db: ($?), exiting..."
    exit 1
 fi
+mysql -uroot -p$MYSQLPW dspam < dspamdb.sql
 mysqladmin -uroot -p$MYSQLPW reload
 mysqladmin -uroot -p$MYSQLPW refresh
 
