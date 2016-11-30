@@ -67,7 +67,7 @@ mysqladmin -uroot -p$MYSQLPW refresh
 echo "GRANT ALL ON dspam.* TO dspam@localhost IDENTIFIED BY 'p4ssw3rd'" | mysql -uroot -p$MYSQLPW
 mysqladmin -uroot -p$MYSQLPW reload
 mysqladmin -uroot -p$MYSQLPW refresh
-wget https://raw.githubusercontent.com/qmtoaster/dsapm/master/dspamdb.sql
+wget https://raw.githubusercontent.com/qmtoaster/dspam/master/dspamdb.sql
 if [ "$?" != "0" ]; then
    echo "Error downloading dspam db: ($?), exiting..."
    exit 1
@@ -79,7 +79,7 @@ mysqladmin -uroot -p$MYSQLPW refresh
 # Change permissions on and place proper files necessary to run dspam daemon
 chmod 777 /var/run/dspam
 cp -p  /etc/dspam.conf /etc/dspam.conf.bak
-wget https://raw.githubusercontent.com/qmtoaster/dsapm/master/dspam.conf
+wget https://raw.githubusercontent.com/qmtoaster/dspam/master/dspam.conf
 if [ "$?" != "0" ]; then
    echo "Error downloading dspam conf: ($?), exiting..."
    exit 1
@@ -99,7 +99,7 @@ if [ "$input" = "Y" ] || [ "$input" = "y" ]; then
          read -p "Add dspam functionality to $domain [Y]: " input1
          if [ "$input1" = "Y" ] || [ "$input1" = "y" ]; then
             mv $domains/$domain/.qmail-default $domains/$domain/.qmail-default.bak
-            wget -O $domains/$domain/.qmail-default https://raw.githubusercontent.com/qmtoaster/dsapm/master/.qmail-default
+            wget -O $domains/$domain/.qmail-default https://raw.githubusercontent.com/qmtoaster/dspam/master/.qmail-default
             echo "Domain: $domain ready..."
          else
             echo "Skipping $domain..."
