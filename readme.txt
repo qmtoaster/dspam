@@ -23,7 +23,7 @@ Training:
       SOURCE=error
       CLASS=spam
       MODE=toe
-   3) Error (dspam signature present in header) dspam catagorized ham as spam. A & B below must be called.
+   3) Error (dspam signature present in header) dspam catagorized ham as spam must call dspam twice to unlearn and train.
       A) 
          SOURCE=error
          CLASS=spam
