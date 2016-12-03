@@ -1,7 +1,6 @@
 # Ignored headers: If DSPAM is behind other tools which may add a header to
-#IgnoreHeader X-Spam-Status
-#IgnoreHeader X-Spam-Scanned
-#IgnoreHeader X-Virus-Scanner-Result
+IgnoreHeader X-Spam-Scanned
+IgnoreHeader X-Virus-Scanner-Result
 IgnoreHeader X-Spam-Checker-Version
 IgnoreHeader X-Spam-Level
 IgnoreHeader X-Spam-Status
