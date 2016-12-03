@@ -10,11 +10,11 @@ Flag options:
 $SOURCE=corpus/error 
 $CLASS=spam/innocent
 $MODE=toe/teft/unlearn
+
 Dspam call:
 cat $email | dspam --user $USER@$DOMAIN --mode=$MODE --class=$CLASS --source=$SOURCE
 
-Flags:
-
+Source:
 1) Corpus (no dspam signature present in header)
    $SOURCE=corpus
    $CLASS=spam/innocent
