@@ -78,8 +78,8 @@ mysqladmin -uroot -p$MYSQLPW refresh
 
 # Change permissions on and place proper files necessary to run dspam daemon
 chmod 777 /var/run/dspam
-cp -p  /etc/dspam.conf /etc/dspam.conf.bak
-wget https://raw.githubusercontent.com/qmtoaster/dspam/master/dspam.conf
+mv /etc/dspam.conf /etc/dspam.conf.bak
+wget -O /etc/dspam.conf https://raw.githubusercontent.com/qmtoaster/dspam/master/dspam.conf
 if [ "$?" != "0" ]; then
    echo "Error downloading dspam conf: ($?), exiting..."
    exit 1
