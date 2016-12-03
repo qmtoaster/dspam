@@ -2,7 +2,17 @@ Run the script 'dspamdb.sh' to create the dspam database, install dspam, and sta
 If dspam is implemented for a domain, every email received by that domain will have a dspam signature in the header and a
 matching signature will automatically be entered in the dspam maria/mysql database. At this point there has been no training.
 To train I have users create a spam and notspam folder in their IMAP account. All spam will be placed into the spam folder and
-all ham into the notspam folder. I run a bash script enumerating all mail in these folders and dumping each to dspam:
+all ham into the notspam folder. I run a bash script enumerating all mail in these folders and dumping each to dspam. 
+
+If there are spam filters in front of dspam that insert header signatures dspam's configuration file must enumerate them
+so that they can be ignored for training purposes. Below are the Spamassassin signatures with the proper configuration syntax:
+
+IgnoreHeader X-Spam-Checker-Version
+IgnoreHeader X-Spam-Level
+IgnoreHeader X-Spam-Status
+IgnoreHeader X-Spam-Flag
+IgnoreHeader X-Spam-Report
+IgnoreHeader X-Spam-Prev-Subject
 
 Training:
 
@@ -33,3 +43,4 @@ Training:
             SOURCE=error
             CLASS=innocent
             MODE=toe
+
