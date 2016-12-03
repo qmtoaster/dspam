@@ -11,7 +11,8 @@ $CLASS=spam/innocent
 $MODE=toe/teft/unlearn
 cat $email | dspam --user $USER@$DOMAIN --mode=$MODE --class=$CLASS --source=$SOURCE
 
-Flag use:
+Flags:
+
 1) Corpus (no dspam signature present in header)
    $SOURCE=corpus
    $CLASS=spam/innocent
