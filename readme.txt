@@ -14,7 +14,7 @@ IgnoreHeader X-Spam-Flag
 IgnoreHeader X-Spam-Report
 IgnoreHeader X-Spam-Prev-Subject
 
-I have list of headers to ignore: https://raw.githubusercontent.com/qmtoaster/dspam/master/IgnoreHeader
+Here's a list of headers to ignore for your config file: https://raw.githubusercontent.com/qmtoaster/dspam/master/IgnoreHeader
 
 Training:
 
