@@ -6,29 +6,29 @@ all ham into the notspam folder. I run a bash script enumerating all mail in the
 
 Training:
 
-Flag options:
-$SOURCE=corpus/error 
-$CLASS=spam/innocent
-$MODE=toe/teft/unlearn
+   Flag options:
+      SOURCE=corpus/error 
+      CLASS=spam/innocent
+      MODE=toe/teft/unlearn
 
-Dspam call:
-cat $email | dspam --user $USER@$DOMAIN --mode=$MODE --class=$CLASS --source=$SOURCE
+   Dspam call:
+      cat $email | dspam --user $USER@$DOMAIN --mode=$MODE --class=$CLASS --source=$SOURCE
 
-Source:
-1) Corpus (no dspam signature present in header)
-   $SOURCE=corpus
-   $CLASS=spam/innocent
-   $MODE=teft
-2) Error (dspam signature present in header) dspam catagorizes spam as ham
-   $SOURCE=error
-   $CLASS=spam
-   $MODE=toe
-3) Error (dspam signature present in header) dspam catagorized ham as spam. A & B below must be called.
-   A) 
-      $SOURCE=error
-      $CLASS=spam
-      $MODE=unlearn
-   B)
-      $SOURCE=error
-      $CLASS=innocent
-      $MODE=toe
+   Source: Depending on email source, corpus or error, dspam must be called with the flags set below.
+   1) Corpus (no dspam signature present in header) Depending on type of corpus, ham or spam, class appropriately.
+      SOURCE=corpus
+      CLASS=spam or innocent
+      MODE=teft
+   2) Error (dspam signature present in header) dspam catagorizes spam as ham
+      SOURCE=error
+      CLASS=spam
+      MODE=toe
+   3) Error (dspam signature present in header) dspam catagorized ham as spam. A & B below must be called.
+      A) 
+         SOURCE=error
+         CLASS=spam
+         MODE=unlearn
+      B)
+         SOURCE=error
+         CLASS=innocent
+         MODE=toe
