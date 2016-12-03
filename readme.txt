@@ -7,8 +7,8 @@ all ham into the notspam folder. I run a bash script enumerating all mail in the
 Training:
 
 $SOURCE=corpus/error 
-$CLASS=spam/innocent/unlearn
-$MODE=toe/teft
+$CLASS=spam/innocent
+$MODE=toe/teft/unlearn
 cat $email | dspam --user $USER@$DOMAIN --mode=$MODE --class=$CLASS --source=$SOURCE
 
 Flag use:
