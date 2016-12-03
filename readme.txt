@@ -4,7 +4,7 @@ matching signature will automatically be entered in the dspam maria/mysql databa
 To train I have users create a spam and notspam folder in their IMAP account. All spam will be placed into the spam folder and
 all ham into the notspam folder. I run a bash script enumerating all mail in these folders and dumping each to dspam:
 
-$SOURCE=corpus/error
+$SOURCE=corpus/error 
 $CLASS=spam/innocent/unlearn
 $MODE=toe/teft
 cat $email | dspam --user $USER@$DOMAIN --mode=$MODE --class=$CLASS --source=$SOURCE
