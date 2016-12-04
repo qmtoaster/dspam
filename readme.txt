@@ -1,4 +1,9 @@
-Run the script 'dspamdb.sh' to create the dspam database, install dspam, and start the dspam service.
+Install Dspam:
+wget https://raw.githubusercontent.com/qmtoaster/dspam/master/dspamdb.sh
+chmod 755 dspamdb.sh
+./dpsamdb.sh
+
+Running the script 'dspamdb.sh' creates the dspam database, installs dspam, and starts the dspam service.
 If dspam is implemented for a domain, every email received by that domain will have a dspam signature in the header and a
 matching signature will automatically be entered in the dspam maria/mysql database. At this point there has been no training.
 To train I have users create a spam and notspam folder in their IMAP account. All spam will be placed into the spam folder and
