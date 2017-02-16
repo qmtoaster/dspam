@@ -38,7 +38,7 @@ $dbon
 $dbstart
 
 # mysql secure install
-read -p "Run MySQL Secure Installation [Y/N] : " yesno
+read -p "Run MySQL Secure Installation [Y/N]? (If you already secured the installation at install skip this step) : " yesno
 if [ "$yesno" = "Y" ] || [ "$yesno" = "y" ]; then
    mysql_secure_installation
 fi
