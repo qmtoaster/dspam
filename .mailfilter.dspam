@@ -6,6 +6,7 @@ VHOME=`pwd`
 TIMESTAMP=`date "+%b %d %H:%M:%S"`
 EXT=tolower($EXT)
 HOST=tolower($HOST)
+# Maildrop must be installed
 # log directory must be created.
 # Owner: vpopmail:vchkpw 
 # Permissions: 755
