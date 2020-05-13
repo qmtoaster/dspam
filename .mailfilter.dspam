@@ -3,6 +3,8 @@ import USER
 import EXT
 import HOST
 VHOME=`pwd`
+SPAMDIR="$VHOME/Maildir/.spam"
+POSTMASTER="../postmaster/Maildir"
 TIMESTAMP=`date "+%b %d %H:%M:%S"`
 EXT=tolower($EXT)
 HOST=tolower($HOST)
@@ -28,7 +30,22 @@ if ( $RETURNCODE == 0 )
          log "Xfilter return: $RETURNCODE"
          if ( /^X-Spam-Status: Yes/  || /^X-DSPAM-Result: Spam/ )
          {
-               to "$VHOME/Maildir/.spam"
+            `test -d $SPAMDIR`
+            if ( $RETURNCODE != 0 )
+            {
+               `maildirmake -f spam $MAILDIR`
+               if ( $RETURNCODE != 0 )
+               {
+                  log "Error creating $SPAMDIR..."
+                  exception {
+                       SUBJ=`reformail -x 'Subject:'`
+                       xfilter 'reformail -I "Subject: $SUBJ [ERROR CREATING SPAM DIRECTORY]"'
+                  }
+                  cc "$POSTMASTER"
+                  to "$MAILDIR"
+               }
+            }
+            to "$SPAMDIR"
          }
          else
          {
