@@ -51,3 +51,5 @@ Training:
             CLASS=innocent
             MODE=toe
 
+Server side filtering:
+
