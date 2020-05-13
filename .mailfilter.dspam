@@ -3,7 +3,8 @@ import USER
 import EXT
 import HOST
 VHOME=`pwd`
-SPAMDIR="$VHOME/Maildir/.spam"
+MAILDIR="$VHOME/Maildir"
+SPAMDIR="$MAILDIR/.spam"
 POSTMASTER="../postmaster/Maildir"
 TIMESTAMP=`date "+%b %d %H:%M:%S"`
 EXT=tolower($EXT)
@@ -19,7 +20,7 @@ log "Delivery: $VHOME"
 `/home/vpopmail/bin/vuserinfo $EXT@$HOST`
 if ( $RETURNCODE == 0 )
 {
-   `test -d $VHOME/Maildir`
+   `test -d $MAILDIR`
    if ( $RETURNCODE == 0 )
    {
       exception {
