@@ -1,0 +1,47 @@
+SHELL="/bin/sh"
+import USER
+import EXT
+import HOST
+VHOME=`pwd`
+TIMESTAMP=`date "+%b %d %H:%M:%S"`
+EXT=tolower($EXT)
+HOST=tolower($HOST)
+logfile "/var/log/maildrop/maildrop-$EXT@$HOST.log"
+log "=== $TIMESTAMP - BEGIN maildrop processing for $EXT@$HOST ==="
+log "Delivery: $VHOME"
+`/home/vpopmail/bin/vuserinfo $EXT@$HOST`
+if ( $RETURNCODE == 0 )
+{
+   `test -d $VHOME/Maildir`
+   if ( $RETURNCODE == 0 )
+   {
+      exception {
+         xfilter "/usr/bin/dspam --user $EXT@$HOST --stdout --deliver=innocent,spam"
+      }
+      if ( $RETURNCODE == 0 )
+      {
+         log "Xfilter return: $RETURNCODE"
+         if ( /^X-Spam-Status: Yes/  || /^X-DSPAM-Result: Spam/ )
+         {
+               to "$VHOME/Maildir/.spam"
+         }
+         else
+         {
+            to "$VHOME/Maildir"
+         }
+      }
+      else
+      {
+         log "Error! Xfilter return: $RETURNCODE"
+         to "$VHOME/Maildir"
+      }
+   }
+   else
+   {
+      log "User has no directory"
+   }
+}
+else
+{
+   log "No such user ($EXT@$HOST)..."
+}
