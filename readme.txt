@@ -53,3 +53,17 @@ Training:
 
 Server side filtering:
 
+For server side filter you must install maildrop and download and install two file .qmail and .mailfilter.dspam in each user directory for which Dspam will be enabled.
+
+# cd /home/vpopmail/'dspam-enabled-domain'/'user'
+# wget https://raw.githubusercontent.com/qmtoaster/dspam/master/.qmail
+# wget https://raw.githubusercontent.com/qmtoaster/dspam/master/.mailfilter.dspam
+# chown vpopmail:vchkpw .qmail
+# chown vpopmail:vchkpw .mailfilter.dspam
+# chmod 600 .qmail
+# chmod 600 .mailfilter.dspam
+
+Mail should flow and be logged
+# cat /var/log/maildrop/maildrop-'user'@'dspam-enabled-domain'.log
+
+At this point in your email client you must create the 'spam' and 'notspam' folders and start placing spam in the spam folder to be learned by the script.
