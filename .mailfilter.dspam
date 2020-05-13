@@ -6,6 +6,10 @@ VHOME=`pwd`
 TIMESTAMP=`date "+%b %d %H:%M:%S"`
 EXT=tolower($EXT)
 HOST=tolower($HOST)
+# log directory must be created.
+# Owner: vpopmail:vchkpw 
+# Permissions: 755
+# If not mail will disappear
 logfile "/var/log/maildrop/maildrop-$EXT@$HOST.log"
 log "=== $TIMESTAMP - BEGIN maildrop processing for $EXT@$HOST ==="
 log "Delivery: $VHOME"
