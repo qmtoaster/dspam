@@ -57,9 +57,9 @@ For server side filter you must install maildrop and download and install two fi
 
 # cd /home/vpopmail/'dspam-enabled-domain'/'user'
 # wget https://raw.githubusercontent.com/qmtoaster/dspam/master/.qmail
-If dspam is enabled at domain level in .qmail-default use this file
+If dspam is enabled at domain level in .qmail-default use this file:
 # wget https://raw.githubusercontent.com/qmtoaster/dspam/master/.mailfilter
-If dspam is not enable at domain level and you want dspam at user level
+If dspam is not enable at domain level and you want dspam at user level use this file:
 # wget https://raw.githubusercontent.com/qmtoaster/dspam/master/.mailfilter.dspam
 # chown vpopmail:vchkpw .qmail
 # chown vpopmail:vchkpw .mailfilter.dspam
