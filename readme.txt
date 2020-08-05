@@ -53,7 +53,7 @@ Training:
 
 Server side filtering:
 
-For server side filter you must install maildrop and download and install two files .qmail and .mailfilter.dspam in each user directory for which Dspam will be enabled.
+For server side filter you must install maildrop and download and install two files .qmail and .mailfilter.dspam (or .mailfilter) in each user directory for which Dspam will be enabled.
 
 # cd /home/vpopmail/'dspam-enabled-domain'/'user'
 # wget https://raw.githubusercontent.com/qmtoaster/dspam/master/.qmail
