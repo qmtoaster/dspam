@@ -1,7 +1,6 @@
 #!/bin/sh
 #
-# DSPAM install script for RHEL 5,6,7
-# Written by Eric C. Broch of White Horse Technical Consulting, January 26, 2015
+# Written by Eric C. Broch of White Horse Technical Consulting, 9/5/20
 #
 # Use this script at your own risk. If you do use it and the bottom drops out of
 # your world, I will accept no responsibilty.
