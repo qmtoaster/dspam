@@ -1,9 +1,11 @@
 #!/bin/sh
 #
-# Written by Eric C. Broch of White Horse Technical Consulting, 9/5/20
+# Written by Eric C. Broch of White Horse Technical Consulting: 9/5/20
 #
 # Use this script at your own risk. If you do use it and the bottom drops out of
 # your world, I will accept no responsibilty.
+#
+# Assume running MySQL/MariaDB server
 #
 MYSQLPW=
 
