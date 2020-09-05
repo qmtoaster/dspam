@@ -7,60 +7,26 @@
 # your world, I will accept no responsibilty.
 #
 MYSQLPW=
-dsstart="service dspam start"
-dson="chkconfig dspam on"
-dbstart="service mysqld start"
-dbon="chkconfig mysqld on"
-dbserv=mysql-server
-pri=yum-priorities
-# Check if release file is present
-if [ ! -f /etc/redhat-release ]; then
-   echo "Error getting EL release. Exiting..."
-   exit 1
-fi
-release=`cat /etc/redhat-release | tr -d [:alpha:] | cut -d"." -f1 | tr -d ' '`
-if  [ "$release" != "5" ]; then
-   pri="yum-plugin-priorities"
-fi
-
-yum -y install $pri
-if [ "$release" = "7" ]; then
-   dsstart="systemctl start dspam"
-   dson="systemctl enable dspam"
-   dbstart="systemctl start mariadb"
-   dbon="systemctl enable mariadb"
-   dbserv=mariadb-server
-fi
-
-# Insall 
-yum -y install $dbserv epel-release dspam dspam-client dspam-mysql wget
-$dbon
-$dbstart
-
-# mysql secure install
-read -p "Run MySQL Secure Installation [Y/N]? (If you already secured the installation at install skip this step) : " yesno
-if [ "$yesno" = "Y" ] || [ "$yesno" = "y" ]; then
-   mysql_secure_installation
-fi
 
 # Get DB password for administrator and check validity.
 if [ -z "$MYSQLPW" ]; then
-   read -s -p "Enter $dbserv admin password to create dspam db: " MYSQLPW
+   read -s -p "Enter MySQL/MariaDB admin password to create dspam database: " MYSQLPW
 fi
 mysqladmin status -uroot -p$MYSQLPW > /dev/null 2>&1
 if [ "$?" != "0" ]; then
-   echo "Bad $dbserv administrator password. Exiting..."
+   echo "Bad MySQL/MariaDB administrator password or MySQL/MariaDB is not running. Exiting..."
    exit 1
 fi
 
-
 echo ""
+echo "Dropping Dspam database if it exists already..."
 echo "use dspam" | mysql -uroot -p$MYSQLPW &> /dev/null
 [ "$?" = "0" ] && mysqldump -uroot -p$MYSQLPW dspam > dspam.sql \
                && echo "drop database dspam" | mysql -u root -p$MYSQLPW \
                && echo "dspam db saved to dspam.sql and dropped..."
 
 # Create dspam with correct permissions
+echo "Creating Dspam database..."
 mysqladmin create dspam -uroot -p$MYSQLPW
 mysqladmin -uroot -p$MYSQLPW reload
 mysqladmin -uroot -p$MYSQLPW refresh
@@ -78,21 +44,16 @@ mysqladmin -uroot -p$MYSQLPW refresh
 
 # Change permissions on and place proper files necessary to run dspam daemon
 chmod 777 /var/run/dspam
-mv /etc/dspam.conf /etc/dspam.conf.bak
+cp -p /etc/dspam.conf /etc/dspam.conf.bak
 wget -O /etc/dspam.conf https://raw.githubusercontent.com/qmtoaster/dspam/master/dspam.conf
 if [ "$?" != "0" ]; then
    echo "Error downloading dspam conf: ($?), exiting..."
    exit 1
 fi
-chmod 744 /etc/dspam.conf
-
-# Start/enable Dspam
-$dson
-$dsstart
 
 # Implement dspam for all domains
 domains=/home/vpopmail/domains
-read -p "Implement dspam for domains? [Y/N]: " input
+read -p "Do you want to implement Dspam filtering at domain level? (For user level filtering skip this step) [Y/N]: " input
 if [ "$input" = "Y" ] || [ "$input" = "y" ]; then
    for domain in `ls $domains`; do
       if [ -d $domains/$domain ]; then
