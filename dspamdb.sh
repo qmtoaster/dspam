@@ -5,8 +5,11 @@
 # Use this script at your own risk. If you do use it and the bottom drops out of
 # your world, I will accept no responsibilty.
 #
-# Assume running MySQL/MariaDB server
+# Assumes running MySQL/MariaDB & QMT server
 #
+
+yum install dspam dspam-client dspam-mysql dspam-web dspam-libs
+
 MYSQLPW=
 
 # Get DB password for administrator and check validity.
