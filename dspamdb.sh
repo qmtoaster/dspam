@@ -8,6 +8,22 @@
 # Assumes running MySQL/MariaDB & QMT server
 #
 
+sites=(
+https://d2lzkl7pfhq30w.cloudfront.net/pub/archive/fedora/linux/releases/28/Everything/x86_64/os/ \
+http://mirror.math.princeton.edu/pub/fedora-archive/fedora/linux/releases/28/Everything/x86_64/os/ \
+http://pubmirror1.math.uh.edu/fedora-buffet/archive/fedora/linux/releases/28/Everything/x86_64/os/ \
+https://pubmirror2.math.uh.edu/fedora-buffet/archive/fedora/linux/releases/28/Everything/x86_64/os/ \
+http://mirrors.kernel.org/fedora-buffet/archive/fedora/linux/releases/28/Everything/x86_64/os/ \
+https://dl.fedoraproject.org/pub/archive/fedora/linux/releases/28/Everything/x86_64/os/
+)
+
+rel=`grep "release 8" /etc/centos-release`
+if [[ ! -z $rel ]]
+then
+   printf '%s\n%s\n%s\n%s\n%s\n%s\n' '[fedora]' 'name=Fedora 28' 'mirrorlist=file:///etc/yum.repos.d/fedoramirrors' 'enabled=1' 'gpgcheck=0' 'priority=100' > /etc/yum.repos.d/fedora28.repo
+   printf '%s\n%s\n%s\n%s\n%s\n%s\n' "${sites[0]}" "${sites[1]}" "${sites[2]}" "{$sites[3]}" "${sites[4]}" "${sites[5]}" > /etc/yum.repos.d/fedoramirrors
+fi
+
 yum install dspam dspam-client dspam-mysql dspam-web dspam-libs
 
 MYSQLPW=
