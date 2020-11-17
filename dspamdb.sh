@@ -26,6 +26,13 @@ fi
 
 yum install dspam dspam-client dspam-mysql dspam-web dspam-libs
 
+# Get db structure
+wget https://raw.githubusercontent.com/qmtoaster/dspam/master/dspamdb.sql
+if [ "$?" != "0" ]; then
+   echo "Error downloading dspam db: ($?), exiting..."
+   exit 1
+fi
+
 MYSQLPW=
 
 # Get DB password for administrator and check validity.
@@ -38,29 +45,31 @@ if [ "$?" != "0" ]; then
    exit 1
 fi
 
+credfile=~/sql.cnf
+echo -e "[client]\nuser=root\npassword=$MYSQLPW\nhost=localhost" > $credfile
 echo ""
 echo "Dropping Dspam database if it exists already..."
-echo "use dspam" | mysql -uroot -p$MYSQLPW &> /dev/null
+mysql --defaults-extra-file=$credfile -e "use dspam" &> /dev/null
 [ "$?" = "0" ] && mysqldump -uroot -p$MYSQLPW dspam > dspam.sql \
-               && echo "drop database dspam" | mysql -u root -p$MYSQLPW \
+               && mysql --defaults-extra-file=$credfile -e "drop database dspam" \
                && echo "dspam db saved to dspam.sql and dropped..."
 
 # Create dspam with correct permissions
 echo "Creating Dspam database..."
-mysqladmin create dspam -uroot -p$MYSQLPW
-mysqladmin -uroot -p$MYSQLPW reload
-mysqladmin -uroot -p$MYSQLPW refresh
-echo "GRANT ALL ON dspam.* TO dspam@localhost IDENTIFIED BY 'p4ssw3rd'" | mysql -uroot -p$MYSQLPW
-mysqladmin -uroot -p$MYSQLPW reload
-mysqladmin -uroot -p$MYSQLPW refresh
-wget https://raw.githubusercontent.com/qmtoaster/dspam/master/dspamdb.sql
-if [ "$?" != "0" ]; then
-   echo "Error downloading dspam db: ($?), exiting..."
-   exit 1
-fi
+mysqladmin --defaults-extra-file=$credfile reload
+mysqladmin --defaults-extra-file=$credfile refresh
+mysqladmin --defaults-extra-file=$credfile create dspam
+mysqladmin --defaults-extra-file=$credfile reload
+mysqladmin --defaults-extra-file=$credfile refresh
+echo "Adding dspam users and privileges..."
+mysql --defaults-extra-file=$credfile -e "CREATE USER dspam@localhost IDENTIFIED BY 'p4ssw3rd'"
+mysql --defaults-extra-file=$credfile -e "GRANT ALL PRIVILEGES ON dspam.* TO dspam@localhost"
+mysqladmin --defaults-extra-file=$credfile reload
+mysqladmin --defaults-extra-file=$credfile refresh
+echo "Done with dspam database..."
 mysql -uroot -p$MYSQLPW dspam < dspamdb.sql
-mysqladmin -uroot -p$MYSQLPW reload
-mysqladmin -uroot -p$MYSQLPW refresh
+mysqladmin --defaults-extra-file=$credfile reload
+mysqladmin --defaults-extra-file=$credfile refresh
 
 # Change permissions on and place proper files necessary to run dspam daemon
 chmod 777 /var/run/dspam
