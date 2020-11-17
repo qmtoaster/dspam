@@ -70,7 +70,7 @@ mysql --defaults-extra-file=$credfile -e "GRANT ALL PRIVILEGES ON dspam.* TO dsp
 mysqladmin --defaults-extra-file=$credfile reload
 mysqladmin --defaults-extra-file=$credfile refresh
 echo "Done with dspam database..."
-mysql -uroot -p$MYSQLPW dspam < dspamdb.sql
+mysql --defaults-extra-file=$credfile dspam < dspamdb.sql
 mysqladmin --defaults-extra-file=$credfile reload
 mysqladmin --defaults-extra-file=$credfile refresh
 
