@@ -5,7 +5,7 @@
 # Use this script at your own risk. If you do use it and the bottom drops out of
 # your world, I will accept no responsibilty.
 #
-# Assumes running MySQL/MariaDB & QMT server
+# Assumes a running MySQL/MariaDB & QMT server
 #
 
 sites=(
