@@ -52,7 +52,7 @@ fi
 echo ""
 echo "Dropping Dspam database if it exists already..."
 mysql --defaults-extra-file=$credfile -e "use dspam" &> /dev/null
-[ "$?" = "0" ] && mysqldump -uroot -p$MYSQLPW dspam > dspam.sql \
+[ "$?" = "0" ] && mysqldump --defaults-extra-file=$credfile dspam > dspam.sql \
                && mysql --defaults-extra-file=$credfile -e "drop database dspam" \
                && echo "dspam db saved to dspam.sql and dropped..."
 
