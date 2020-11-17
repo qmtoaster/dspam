@@ -39,14 +39,16 @@ MYSQLPW=
 if [ -z "$MYSQLPW" ]; then
    read -s -p "Enter MySQL/MariaDB admin password to create dspam database: " MYSQLPW
 fi
-mysqladmin status -uroot -p$MYSQLPW > /dev/null 2>&1
+
+credfile=~/sql.cnf
+echo -e "[client]\nuser=root\npassword=$MYSQLPW\nhost=localhost" > $credfile
+
+mysqladmin --defaults-extra-file=$credfile status > /dev/null 2>&1
 if [ "$?" != "0" ]; then
    echo "Bad MySQL/MariaDB administrator password or MySQL/MariaDB is not running. Exiting..."
    exit 1
 fi
 
-credfile=~/sql.cnf
-echo -e "[client]\nuser=root\npassword=$MYSQLPW\nhost=localhost" > $credfile
 echo ""
 echo "Dropping Dspam database if it exists already..."
 mysql --defaults-extra-file=$credfile -e "use dspam" &> /dev/null
