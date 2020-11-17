@@ -24,7 +24,7 @@ then
    printf '%s\n%s\n%s\n%s\n%s\n%s\n' "${sites[0]}" "${sites[1]}" "${sites[2]}" "{$sites[3]}" "${sites[4]}" "${sites[5]}" > /etc/yum.repos.d/fedoramirrors
 fi
 
-yum install dspam dspam-client dspam-mysql dspam-web dspam-libs
+yum --enablerepo=fedora install dspam dspam-client dspam-mysql dspam-web dspam-libs
 
 # Get db structure
 wget https://raw.githubusercontent.com/qmtoaster/dspam/master/dspamdb.sql
