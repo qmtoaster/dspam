@@ -25,7 +25,7 @@ then
    FREPO=--enablerepo=fedora
 fi
 
-yum $FREPO install dspam dspam-client dspam-mysql dspam-web dspam-libs
+yum $FREPO install dspam dspam-client dspam-mysql dspam-libs
 
 # Get db structure
 wget https://raw.githubusercontent.com/qmtoaster/dspam/master/dspamdb.sql
@@ -103,6 +103,7 @@ fi
 
 read -p "Do you want to implement Dspam Web [Y/N]: " input
 if [ "$input" = "Y" ] || [ "$input" = "y" ]; then
+   yum $FREPO install dspam-web
    wget -O /etc/httpd/conf.d/dspam-web.conf https://raw.githubusercontent.com/qmtoaster/dspam/master/dspam-web.conf
    groupmod -g 1984 dspam
    usermod -u 1988 -g 1984 dspam
