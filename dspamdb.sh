@@ -112,6 +112,21 @@ if [ "$input" = "Y" ] || [ "$input" = "y" ]; then
    chown dspam:dspam /usr/bin/dspam
    chown dspam:dspam /usr/bin/dspamc
    systemctl restart httpd
+   TAB="$(printf '\t')" && GREEN=$(tput setaf 2) && RED=$(tput setaf 1) && NORMAL=$(tput sgr0)
+   echo $GREEN
+   printf "You will need to add credentials for all virtual email users at the command line.\n"
+   printf "Create credential file and add first user: \n"
+   echo $NORMAL
+   printf "# htpasswd -c /var/www/dspam-passwd myemail@mydomain.tld\n"
+   printf "\n"
+   echo $GREEN
+   printf "Add subsequent users to credential file: \n"
+   echo $NORMAL
+   printf "# htpasswd /var/www/dspam-passwd myemail2@mydomain.tld\n"
+   printf "\n"
+   printf "You will also need to change the 'ServerName' option in Dspam httpd config file, dspam-web.conf\n"
+   printf "You can login to the web interface with http://my.fqdn.tld:8009 or http://my.ip.addr:8009/\n"
+   echo $NORMAL
 fi
 
 exit 0
