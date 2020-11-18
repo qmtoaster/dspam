@@ -125,7 +125,7 @@ if [ "$input" = "Y" ] || [ "$input" = "y" ]; then
    printf "# htpasswd /var/www/dspam-passwd myemail2@mydomain.tld\n"
    printf "\n"
    echo $GREEN
-   printf "You will also need to change the 'ServerName' option in Dspam httpd config file, dspam-web.conf\n"
+   printf "You will also need to change the 'ServerName' option in Dspam's httpd config file, dspam-web.conf\n"
    printf "You can login to the web interface with http://my.fqdn.tld:8009 or http://my.ip.addr:8009/\n"
    echo $NORMAL
 fi
