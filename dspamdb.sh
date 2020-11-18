@@ -103,6 +103,8 @@ fi
 
 read -p "Do you want to implement Dspam Web [Y/N]: " input
 if [ "$input" = "Y" ] || [ "$input" = "y" ]; then
+   firewall-cmd --zone=public --add-port=8009/tcp --permanent
+   firewall-cmd --reload
    yum $FREPO install dspam-web
    wget -O /etc/httpd/conf.d/dspam-web.conf https://raw.githubusercontent.com/qmtoaster/dspam/master/dspam-web.conf
    groupmod -g 1984 dspam
