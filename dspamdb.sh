@@ -101,4 +101,17 @@ if [ "$input" = "Y" ] || [ "$input" = "y" ]; then
    done
 fi
 
+read -p "Do you want to implement Dspam Web [Y/N]: " input
+if [ "$input" = "Y" ] || [ "$input" = "y" ]; then
+   wget -O /etc/httpd/conf.d/dspam-web.conf https://raw.githubusercontent.com/qmtoaster/dspam/master/dspam-web.conf
+   groupmod -g 1984 dspam
+   usermod -u 1988 -g 1984 dspam
+   chown -R dspam:dspam /var/www/dspam
+   chown dspam:dspam /run/dspam
+   chown -R dspam:dspam /var/log/dspam
+   chown dspam:dspam /usr/bin/dspam
+   chown dspam:dspam /usr/bin/dspamc
+   systemctl restart httpd
+fi
+
 exit 0
