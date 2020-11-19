@@ -117,9 +117,11 @@ if [ "$input" = "Y" ] || [ "$input" = "y" ]; then
       chown -R dspam:dspam /var/log/dspam
    else
       echo $RED
-      printf "Cannot change dspam user and group to 1988 and 1984 respectively."
-      printf "In order for Dspam Web to work properly the uid and gid for dspam must be higher than 1000."
-      printf "You must manually change dspam uid and gid for the Dspam Web interface to work."
+      printf "Cannot change dspam uid and gid to 1988 and 1984 respectively."
+      printf "In order for dspam web to work properly the uid and gid for dspam must be higher than 1000."
+      printf "You must manually change dspam uid and gid for the dspam web interface to work."
+      printf "You must also change the ownership of all files owned by previous uid/gid to new uid/gid."
+      printf "The files necessary for ownership change can be found by examining this script."
       echo $NORMAL
    fi
    chown dspam:mail /usr/bin/dspam /usr/bin/dspamc
