@@ -114,6 +114,7 @@ if [ "$input" = "Y" ] || [ "$input" = "y" ]; then
    chown -R dspam:dspam /var/log/dspam
    chown dspam:dspam /usr/bin/dspam
    chown dspam:dspam /usr/bin/dspamc
+   sed -i 's|"configure.pl"|"/var/www/dspam/configure.pl"|g' /var/www/dspam/*.cgi
    systemctl restart httpd
    TAB="$(printf '\t')" && GREEN=$(tput setaf 2) && RED=$(tput setaf 1) && NORMAL=$(tput sgr0)
    echo $RED
