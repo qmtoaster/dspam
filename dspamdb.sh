@@ -135,6 +135,8 @@ if [ "$input" = "Y" ] || [ "$input" = "y" ]; then
 fi
 
 chown dspam:mail /usr/bin/dspam
+chown dspam:mail /usr/bin/dspamc
 chmod 2511  /usr/bin/dspam
+chmod 2511  /usr/bin/dspamc
 
 exit 0
