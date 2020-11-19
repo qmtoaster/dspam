@@ -103,20 +103,29 @@ fi
 
 read -p "Do you want to implement Dspam Web [Y/N]: " input
 if [ "$input" = "Y" ] || [ "$input" = "y" ]; then
+   TAB="$(printf '\t')" && GREEN=$(tput setaf 2) && RED=$(tput setaf 1) && NORMAL=$(tput sgr0)
    firewall-cmd --zone=public --add-port=8009/tcp --permanent
    firewall-cmd --reload
    yum $FREPO install dspam-web
    wget -O /etc/httpd/conf.d/dspam-web.conf https://raw.githubusercontent.com/qmtoaster/dspam/master/dspam-web.conf
-   groupmod -g 1984 dspam
-   usermod -u 1988 -g 1984 dspam
-   chown -R dspam:dspam /var/www/dspam
-   chown dspam:dspam /run/dspam
-   chown -R dspam:dspam /var/log/dspam
+   if [ ! -z "`grep :1984: /etc/passwd`"  ] && [ ! -z "`grep :1988: /etc/passwd`"  ]
+   then
+      groupmod -g 1984 dspam
+      usermod -u 1988 -g 1984 dspam
+      chown -R dspam:dspam /var/www/dspam
+      chown dspam:dspam /run/dspam
+      chown -R dspam:dspam /var/log/dspam
+   else
+      echo $RED
+      printf "Cannot change dspam user and group to 1988 and 1984 respectively."
+      printf "In order for Dspam Web to work properly the uid and gid for dspam must be higher than 1000."
+      printf "You must manually change dspam uid and gid for the Dspam Web interface to work."
+      echo $NORMAL
+   fi
    chown dspam:mail /usr/bin/dspam /usr/bin/dspamc
    chmod 2511  /usr/bin/dspam /usr/bin/dspamc
    sed -i 's|"configure.pl"|"/var/www/dspam/configure.pl"|g' /var/www/dspam/*.cgi
    systemctl restart httpd
-   TAB="$(printf '\t')" && GREEN=$(tput setaf 2) && RED=$(tput setaf 1) && NORMAL=$(tput sgr0)
    echo $RED
    printf "You will need to add credentials for all virtual email users at the command line.\n"
    echo $GREEN
