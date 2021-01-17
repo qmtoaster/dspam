@@ -42,7 +42,7 @@ if [ -z "$MYSQLPW" ]; then
 fi
 
 credfile=~/sql.cnf
-echo -e "[client]\nuser=root\npassword=$MYSQLPW\nhost=localhost" > $credfile
+echo -e "[client]\nuser=root\npassword='$MYSQLPW'\nhost=localhost" > $credfile
 
 mysqladmin --defaults-extra-file=$credfile status > /dev/null 2>&1
 if [ "$?" != "0" ]; then
