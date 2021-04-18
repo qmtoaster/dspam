@@ -82,6 +82,7 @@ if [ "$?" != "0" ]; then
    echo "Error downloading dspam conf: ($?), exiting..."
    exit 1
 fi
+chmod 644 /etc/dspam.conf
 
 # Implement dspam for all domains
 domains=/home/vpopmail/domains
