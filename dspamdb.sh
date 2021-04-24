@@ -126,7 +126,7 @@ then
    echo "https://github.com/qmtoaster/dspam/blob/master/readme.txt"
    echo $NORMAL
    read -p "Press [Return] To Continue: " readinput
-if
+fi
    
 read -p "Do you want to implement Dspam Web [Y/N]: " input
 if [ "$input" = "Y" ] || [ "$input" = "y" ]; then
