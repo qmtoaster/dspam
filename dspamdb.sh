@@ -122,7 +122,7 @@ fi
 if [ simfilter -eq 0 ] && [ domfilter -eq 0 ]
 then
    echo $RED
-   echo "To implement per user filtering see this readme file"
+   echo "To implement per user filtering see this readme file: "
    echo "https://github.com/qmtoaster/dspam/blob/master/readme.txt"
    echo $NORMAL
    read -p "Press [Return] To Continue: " readinput
