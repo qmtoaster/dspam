@@ -24,12 +24,12 @@ if ( $RETURNCODE == 0 )
    if ( $RETURNCODE == 0 )
    {
       exception {
-         xfilter "/usr/bin/dspam --user $EXT@$HOST --stdout --deliver=innocent,spam"
+         xfilter "/usr/bin/dspamc --user $EXT@$HOST --stdout --deliver=innocent,spam"
       }
       if ( $RETURNCODE == 0 )
       {
          log "Xfilter return: $RETURNCODE"
-         if ( /^X-Spam-Status: Yes/  || /^X-DSPAM-Result: Spam/ )
+         if ( /^X-Spam-Status: Yes/  || /^X-DSPAM-Result: Spam/ || /^X-Spam: yes/ )
          {
             `test -d $SPAMDIR`
             if ( $RETURNCODE != 0 )
