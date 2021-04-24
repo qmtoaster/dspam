@@ -8,6 +8,9 @@
 # Assumes a running MySQL/MariaDB & QMT server
 #
 
+simfilter=
+domfilter=
+
 sites=(
 https://d2lzkl7pfhq30w.cloudfront.net/pub/archive/fedora/linux/releases/28/Everything/x86_64/os/ \
 http://mirror.math.princeton.edu/pub/fedora-archive/fedora/linux/releases/28/Everything/x86_64/os/ \
@@ -76,22 +79,26 @@ mysqladmin --defaults-extra-file=$credfile refresh
 
 # Change permissions on and place proper files necessary to run dspam daemon
 chmod 777 /var/run/dspam
-cp -p /etc/dspam.conf /etc/dspam.conf.bak
-wget -O /etc/dspam.conf https://raw.githubusercontent.com/qmtoaster/dspam/master/dspam.conf
-if [ "$?" != "0" ]; then
-   echo "Error downloading dspam conf: ($?), exiting..."
-   exit 1
-fi
-chmod 644 /etc/dspam.conf
+
+TAB="$(printf '\t')" && GREEN=$(tput setaf 2) && RED=$(tput setaf 1) && NORMAL=$(tput sgr0)
+echo $RED
+echo "You are now ready to implement Dspam. Dspam can be implemented in one"
+echo "of two ways: 1) Dspam can implemented in simscan by installing"
+echo "the development version, 2) it can be implemented in the .qmail-default"
+echo "file for each domain. Implementing in simscan is for global scanning."
+echo "And, for each domain is for personal scanning."
+echo $NORMAL
+read -p "Press [Return] To Continue: " readinput
 
 # Implement dspam for all domains
 domains=/home/vpopmail/domains
-read -p "Do you want to implement Dspam filtering at domain level? (For user level filtering skip this step) [Y/N]: " input
+read -p "Do you want to implement Dspam filtering at domain level? (For user level (or simscan) filtering skip this step) [Y/N]: " input
 if [ "$input" = "Y" ] || [ "$input" = "y" ]; then
    for domain in `ls $domains`; do
       if [ -d $domains/$domain ]; then
          read -p "Add dspam functionality to $domain [Y]: " input1
          if [ "$input1" = "Y" ] || [ "$input1" = "y" ]; then
+            domfilter=1
             mv $domains/$domain/.qmail-default $domains/$domain/.qmail-default.bak
             wget -O $domains/$domain/.qmail-default https://raw.githubusercontent.com/qmtoaster/dspam/master/.qmail-default
             echo "Domain: $domain ready..."
@@ -102,6 +109,25 @@ if [ "$input" = "Y" ] || [ "$input" = "y" ]; then
    done
 fi
 
+read -p "Do you want to implement Dspam filtering under simscan? (For user level filtering skip this step) [Y/N]: " input
+if [ "$input" = "Y" ] || [ "$input" = "y" ]; then
+   simfilter=1
+   dnf --enablerepo=qmt-devel update simscan
+   echo $RED
+   echo "Add 'dspam=yes' in '/var/qmail/control/simcontrol' and run 'qmailctl cdb'"
+   echo $NORMAL
+   read -p "Press [Return] To Continue: " readinput
+fi
+
+if [ simfilter -eq 0 ] && [ domfilter -eq 0 ]
+then
+   echo $RED
+   echo "To implement per user filtering see this readme file"
+   echo "https://github.com/qmtoaster/dspam/blob/master/readme.txt"
+   echo $NORMAL
+   read -p "Press [Return] To Continue: " readinput
+if
+   
 read -p "Do you want to implement Dspam Web [Y/N]: " input
 if [ "$input" = "Y" ] || [ "$input" = "y" ]; then
    TAB="$(printf '\t')" && GREEN=$(tput setaf 2) && RED=$(tput setaf 1) && NORMAL=$(tput sgr0)
