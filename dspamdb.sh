@@ -8,8 +8,8 @@
 # Assumes a running MySQL/MariaDB & QMT server
 #
 
-simfilter=
-domfilter=
+simfilter=0
+domfilter=0
 
 sites=(
 https://d2lzkl7pfhq30w.cloudfront.net/pub/archive/fedora/linux/releases/28/Everything/x86_64/os/ \
