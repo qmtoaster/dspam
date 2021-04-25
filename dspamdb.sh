@@ -86,7 +86,7 @@ echo "You are now ready to implement Dspam. Dspam can be implemented in one"
 echo "of three ways: 1) Dspam can implemented in simscan by installing"
 echo "the development version, 2) it can be implemented in the .qmail-default"
 echo "file for each domain, or 3) it can be implemented at the user level in"
-echo "user's .qmail & .mailfilter file show later. Implementing in simscan is"
+echo "user's .qmail & .mailfilter file shown later. Implementing in simscan is"
 echo "for global scanning, and at domain & user level is for personal scanning."
 echo $NORMAL
 read -p "Press [Return] To Continue: " readinput
