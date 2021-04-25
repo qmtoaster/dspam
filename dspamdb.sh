@@ -20,7 +20,7 @@ http://mirrors.kernel.org/fedora-buffet/archive/fedora/linux/releases/28/Everyth
 https://dl.fedoraproject.org/pub/archive/fedora/linux/releases/28/Everything/x86_64/os/
 )
 FREPO=
-rel=`grep "release 8" /etc/centos-release`
+rel=`grep "release 8" /etc/*-release`
 if [[ ! -z $rel ]]
 then
    printf '%s\n%s\n%s\n%s\n%s\n%s\n' '[fedora]' 'name=Fedora 28' 'mirrorlist=file:///etc/yum.repos.d/fedoramirrors' 'enabled=0' 'gpgcheck=0' 'priority=100' > /etc/yum.repos.d/fedora28.repo
