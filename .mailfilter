@@ -23,7 +23,7 @@ if ( $RETURNCODE == 0 )
    `test -d $MAILDIR`
    if ( $RETURNCODE == 0 )
    {
-      if ( /^X-Spam-Status: Yes/  || /^X-DSPAM-Result: Spam/ )
+      if ( /^X-Spam-Status: Yes/  || /^X-DSPAM-Result: Spam/ || /^X-Spam: yes/ )
       {
          `test -d $SPAMDIR`
          if ( $RETURNCODE != 0 )
