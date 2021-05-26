@@ -28,7 +28,7 @@ then
    FREPO=--enablerepo=fedora
 fi
 
-yum $FREPO install dspam dspam-client dspam-mysql dspam-libs
+yum $FREPO --enablerepo=qmt-devel install dspam dspam-client dspam-mysql dspam-libs
 
 # Get db structure
 wget https://raw.githubusercontent.com/qmtoaster/dspam/master/dspamdb.sql
