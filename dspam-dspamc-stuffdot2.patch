@@ -1,0 +1,94 @@
+--- ./src/dspam.c       2021-05-20 15:07:38.717943662 -0600
++++ ./src/dspam.new.c   2021-05-20 15:00:16.854513189 -0600
+@@ -103,6 +103,54 @@
+ #define USE_SMTP        (_ds_read_attribute(agent_config, "DeliveryProto") && !strcmp(_ds_read_attribute(agent_config, "DeliveryProto"), "SMTP"))
+ #define LOOKUP(A, B)   ((_ds_pref_val(A, "localStore")[0]) ? _ds_pref_val(A, "localStore") : B)
+
++const char * stuff_dot(const char * message);
++/*
++** const char * stuff_dot(char * message);
++**
++** DESCRIPTION
++**   Stuff '.' where necessary for SMTP Protocol
++**
++** INPUT ARGUMENTS
++**     const char * message
++**
++** RETURN VALUES
++**   Returns const char * msg
++**
++** Author
++**   Eric C. Broch
++**
++*/
++const char * stuff_dot(const char * message) {
++
++  char * msg;
++  int lmessage = strlen(message);
++  if (!lmessage) {
++     LOGDEBUG("stuff_dot: Message 0 length");
++     return NULL;
++  }
++  msg = (char *) malloc(lmessage);
++  if ( msg == NULL ) {
++     LOGDEBUG("stuff_dot: Unable to allocate memory, size: %d",lmessage);
++     return NULL;
++  }
++  int i = 0, j = 0,k = 0;
++  while(i<lmessage) {
++    msg[j] = message[i];
++    if ((message[i] == '\n') && (message[i + 1] && message[i + 1] == '.')) {
++      k++;
++      msg = (char *) realloc(msg,lmessage+k);
++      if ( msg == NULL ) {
++         free(msg);
++         LOGDEBUG("stuff_dot: Unable to reallocate memory, size: %d", lmessage+k);
++         return NULL;
++      }
++      msg[++j] = '.';
++    }
++    i++;
++    j++;
++  }
++  k++;msg = (char *) realloc(msg,lmessage+k); if ( msg == NULL ) { free(msg);LOGDEBUG("stuff_dot: Unable to NULL msg, size: %d", lmessage+k);return NULL;} msg[lmessage+k-1]=0;return msg;
++}
+
+ int
+ main (int argc, char *argv[])
+@@ -977,7 +1025,18 @@
+                      (result == DSR_ISSPAM) ? "SPAM" : "INNOCENT");
+
+   if (mailer_args == NULL) {
+-    fputs (message, stream);
++    /* calling program: dspamc */
++    if (stream == ATX->sockfd) {
++      /* stuff dots before sending back to dspam client */
++      /* otherwise trunction of email can occur, Eric Broch 04-12-2021 */
++      char * msg = stuff_dot(message);
++      fputs(msg,stream);
++      free(msg);
++    }
++    /* calling program: dspam */
++    else {
++      fputs(message,stream);
++    }
+     return 0;
+   }
+
+--- ./src/client.c      2012-04-11 12:48:33.000000000 -0600
++++ ./src/client.new.c  2021-05-19 16:51:42.793261161 -0600
+@@ -228,6 +228,14 @@
+           exitcode = 99;
+         }
+       } else {
++        /* de-stuff dots from server, 04-12-2021, Eric C. Broch, 7 lines */
++        if((line[0] && line[0]=='.') && (line[1] && line[1]=='.')) {
++          size_t i, len = strlen(line);
++          for(i=0;i<len;i++){
++            line[i]=line[i+1];
++          }
++          line[len-1]=0;
++        }
+         printf("%s\n", line);
+       }
+       free(line);
