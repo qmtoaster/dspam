@@ -134,7 +134,7 @@ if [ "$input" = "Y" ] || [ "$input" = "y" ]; then
    TAB="$(printf '\t')" && GREEN=$(tput setaf 2) && RED=$(tput setaf 1) && NORMAL=$(tput sgr0)
    firewall-cmd --zone=public --add-port=8009/tcp --permanent
    firewall-cmd --reload
-   yum $FREPO install dspam-web
+   yum $FREPO install dspam-web perl-Tk
    wget -O /etc/httpd/conf.d/dspam-web.conf https://raw.githubusercontent.com/qmtoaster/dspam/master/dspam-web.conf
    if [ ! -z "`grep :1984: /etc/passwd`"  ] && [ ! -z "`grep :1988: /etc/passwd`"  ]
    then
