@@ -56,15 +56,19 @@ Server side filtering 2 options 1) Before queue, 2) after queue :
 Option 1)
 https://www.qmailtoaster.org/simscan.html
 
-Option 2)
-For server side filter (after queue) you must install maildrop and download and install two files 
-.qmail and .mailfilter.dspam (or .mailfilter) in each user directory for which Dspam will be enabled.
 
+Option 2a Domain level)
+If dspam is enabled at domain level in .qmail-default use this file:
+# cd /home/vpopmail/'dspam-enabled-domain'
+# mv .qmail-default .qmail-default.bak
+# chmod 600 .qmail-default && chown vpopmail:vchkpw .qmail-default
+# wget https://raw.githubusercontent.com/qmtoaster/dspam/master/.qmail-default
+
+Option 2b User level)
+If dspam is enabled at user level you must install maildrop and download and install two files 
+.qmail and .mailfilter.dspam (or .mailfilter) in each user directory for which Dspam will be enabled.
 # cd /home/vpopmail/'dspam-enabled-domain'/'user'
 # wget https://raw.githubusercontent.com/qmtoaster/dspam/master/.qmail
-If dspam is enabled at domain level in .qmail-default use this file:
-# wget https://raw.githubusercontent.com/qmtoaster/dspam/master/.mailfilter
-If dspam is not enable at domain level and you want dspam at user level use this file:
 # wget https://raw.githubusercontent.com/qmtoaster/dspam/master/.mailfilter.dspam
 # chown vpopmail:vchkpw .qmail
 # chown vpopmail:vchkpw .mailfilter.dspam
