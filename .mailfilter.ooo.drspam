@@ -1,0 +1,183 @@
+SHELL="/bin/sh"
+import EXT
+import HOST
+VHOME=`pwd`
+MAILDIR="$VHOME/Maildir"
+SPAMDIR="$VHOME/Maildir/.spam"
+VACDIR="$VHOME/vacation"
+POSTMASTER="../postmaster/Maildir"
+SUBJ=""
+SUBJADD=""
+DUR=86400
+NUM=3
+VACSUBJ="[oO][uU][tT] [oO][fF] [oO][fF][fF][iI][cC][eE]"
+TIMESTAMP=`date "+%b %d %H:%M:%S"`
+EXT=tolower($EXT)
+HOST=tolower($HOST)
+MSGDROPDIR="$VHOME/dropmsg"
+logfile "/var/log/maildrop/maildrop-$EXT@$HOST.log"
+log "=== $TIMESTAMP - BEGIN maildrop processing for $EXT@$HOST ==="
+log "Delivery: $VHOME"
+log "Size: $SIZE"
+
+# Drop messages from MSGDROP
+if ( lookup( $FROM, "badfrom.dat" ) )
+{
+   MYDATE=`date "+%a %b %d %H:%M:%S %Y"`
+   SUBJ=`reformail -x 'Subject:'`
+   log "Date: $MYDATE"
+   log "From: $FROM"
+   log "Subj: $SUBJ"
+   log "Dropping message, exiting..."
+   #`/usr/bin/autorespond $DUR 50 $MSGDROPDIR/$MSGDROP $MSGDROPDIR`
+   exit
+}
+
+# Check vpopmail mysql db for user
+`/home/vpopmail/bin/vuserinfo $EXT@$HOST`
+if ( $RETURNCODE != 0 )
+{
+   log "No such user ($EXT@$HOST)..."
+   exit
+}
+
+# Check for vpopmail user directory
+`test -d $MAILDIR`
+if ( $RETURNCODE != 0 )
+{
+   log "User $EXT@$HOST has no directory"
+   exit
+}
+
+# Run Dspam
+exception {
+   xfilter "/usr/bin/dspam --user $EXT@$HOST --deliver=stdout --deliver=innocent,spam"
+}
+if ( $RETURNCODE != 0 )
+{
+   log "Dspam error: $RETURNCODE"
+   exit
+}
+
+# Run Rspam
+exception {
+   xfilter "/usr/bin/rspamc --mime"
+}
+if ( $RETURNCODE != 0 )
+{
+   log "Rspam error: $RETURNCODE"
+   exit
+}
+
+# Check if spam and deliver to spam folder
+if ( /^X-Spam-Status: Yes/  || /^X-DSPAM-Result: Spam/ || /^X-Spam: yes/ )
+{
+   `test -d $SPAMDIR`
+   if ( $RETURNCODE != 0 )
+   {
+      `maildirmake -f spam $MAILDIR`
+      if ( $RETURNCODE != 0 )
+      {
+          log "Error creating $SPAMDIR..."
+          exception {
+              SUBJ=`reformail -x 'Subject:'`
+              xfilter 'reformail -I "Subject: $SUBJ [ERROR CREATING SPAM DIRECTORY]"'
+         }
+         cc "$POSTMASTER"
+         to "$MAILDIR"
+      }
+   }
+   to "$SPAMDIR"
+}
+# Check if message is from this user, and process
+if (( /^From: .*$EXT@$HOST.*/ ) && ( /^To: .*$EXT@$HOST.*/ ) && ( /^Return-Path: .*$EXT@$HOST.*/ ) && ( /^From .*$EXT@$HOST.*/ ))
+{
+   # Check if this is a user vacation (autorespond) start/stop request message.
+   if ( /^Subject: $VACSUBJ/  )
+   {
+      log "===== OUT OF OFFICE (begin) ====="
+      `test -d $VACDIR`
+      if ( $RETURNCODE != 0 )
+      {
+         `mkdir $VACDIR`
+         if ( $RETURNCODE != 0 )
+         {
+            log "Could not create ($VAC) vacation directory..."
+            exception {
+               SUBJ=`reformail -x 'Subject:'`
+               xfilter 'reformail -I "Subject: $SUBJ [VACATION REQUEST FAILED]"'
+            }
+            cc "$POSTMASTER"
+            to "$MAILDIR"
+         }
+      }
+      # Remove all vacation files (esp. message)
+      `find $VACDIR/ -type f -exec rm {} \;`
+      SUBJADD="[OUT-OF-OFFICE STOP]"
+      if ( /^Content-Type: text\/html/ )
+      {
+         log "===== OOO-Pre (html) ======"
+         MSG=`formail -I "" | sed '/Content-Type: text\/html/,$d' | sed '/Content-Transfer-Encoding:/,$!d' | grep -v Content- | sed '/^-.*[0-9,A-Z,a-z]/d' | sed '/^$/d' | sed '/--/,$d'`
+      }
+      else
+      {
+         log "===== OOO-Pre (text) ======"
+         MSG=`/usr/bin/formail -I "" | sed '/--/,$d'`
+      }
+
+      # This is a vacation (autorespond) start request, if MSG is not empty.
+      `test -z $MSG`
+      if ( $RETURNCODE != 0 )
+      {
+         log "===== OOO Start request ====="
+         if ( /^Content-Type: text\/html/ )
+         {
+            log "===== OOO (html) ======"
+            `formail -I "" | sed '/Content-Type: text\/html/,$d' | sed '/Content-Transfer-Encoding:/,$!d' | grep -v Content- | sed '/^-.*[0-9,A-Z,a-z]/d' | sed '/--/,$d'>$VACDIR/message`
+            `formail -I "" | sed '/Content-Type: text\/html/,$d' | sed '/Content-Transfer-Encoding:/,$!d' | grep -v Content- | sed '/^-.*[0-9,A-Z,a-z]/d' | sed '/--/,$!d'>>$VACDIR/message`
+         }
+         else
+         {
+            log  "===== OOO (text) ======"
+            `/usr/bin/formail -I "" > $VACDIR/message`
+         }
+         SUBJADD="[OUT-OF-OFFICE START]"
+         if ( /^Content-Transfer-Encoding: base64/ )
+         {
+            log "===== OOO (Base64 encoding) ======"
+            `/usr/bin/base64 --decode $VACDIR/message > $VACDIR/tmp.msg`
+            if ( $RETURNCODE != 0 )
+            {
+               # Remove all vacation files (esp. message)
+               `find $VACDIR/ -type f -exec rm {} \;`
+               SUBJADD="[OUT-OF-OFFICE STOP]"
+            }
+            log "===== OOO Return decode: $RETURNCODE ====="
+
+            `/bin/mv $VACDIR/tmp.msg $VACDIR/message`
+            if ( $RETURNCODE != 0 )
+            {
+               # Remove all vacation files (esp. message)
+               `find $VACDIR/ -type f -exec rm {} \;`
+               SUBJADD="[OUT-OF-OFFICE STOP]"
+            }
+            log "===== OOO Return move: $RETURNCODE ====="
+         }
+         log  "===== OOO Start request done ======"
+      }
+      log "===== OOO Reform subject ====="
+      exception {
+         SUBJ=`reformail -x 'Subject:'`
+         xfilter 'reformail -I "Subject: $SUBJ $SUBJADD"'
+      }
+      log "===== OUT OF OFFICE (end) ====="
+   }
+   to "$MAILDIR"
+}
+# Auto respond if we have a message
+`test -f $VACDIR/message`
+if ( $RETURNCODE == 0 )
+{
+   `/usr/bin/autorespond $DUR $NUM $VACDIR/message $VACDIR`
+}
+to "$MAILDIR"
